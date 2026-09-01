@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<!-- saved from url=(0076)file:///Users/elliottwlee/Downloads/nfl-pickem_with_full_schedule%20(1).html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 NFL Pick'em</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./2026 NFL Pick&#39;em_files/css2" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10151C;
+    --panel:#1B222C;
+    --panel-2:#212B37;
+    --line:rgba(237,234,226,0.13);
+    --text:#EDEAE2;
+    --muted:#8B93A1;
+    --gold:#E8A93A;
+    --teal:#3FA796;
+    --red:#C1443B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Karla',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Anton',sans-serif; letter-spacing:0.02em; font-weight:400;}
+  #app{max-width:760px; margin:0 auto; padding:0 0 60px;}
+
+  /* Header */
+  header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:22px 18px 14px; border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-size:26px; margin:0; letter-spacing:0.03em;
+  }
+  header .tag{color:var(--gold); font-size:26px;}
+  header .sub{color:var(--muted); font-size:12px; margin-top:2px;}
+  .commish-btn{
+    background:none; border:1px solid var(--line); color:var(--muted);
+    font-family:'Karla',sans-serif; font-size:12px; padding:6px 10px;
+    border-radius:3px; cursor:pointer;
+  }
+  .commish-btn.active{border-color:var(--gold); color:var(--gold);}
+
+  /* Week tabs */
+  .week-tabs{
+    display:flex; overflow-x:auto; gap:2px; padding:10px 14px;
+    border-bottom:1px solid var(--line); background:var(--panel);
+  }
+  .week-tabs::-webkit-scrollbar{height:4px;}
+  .week-tab{
+    flex:0 0 auto; width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+    font-family:'Anton',sans-serif; font-size:14px; color:var(--muted);
+    background:var(--panel-2); border-radius:3px; cursor:pointer; border:1px solid transparent;
+  }
+  .week-tab.active{background:var(--gold); color:#161C24;}
+  .week-tab.has-games:not(.active){border-color:var(--teal); color:var(--teal);}
+
+  /* Hero / scoreboard bug */
+  .hero{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 18px; border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, var(--panel), var(--bg));
+  }
+  .hero .leader-label{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:0.12em;}
+  .hero .leader-name{font-size:22px; margin-top:2px;}
+  .hero .leader-pts{font-family:'Anton',sans-serif; font-size:56px; color:var(--gold); line-height:1;}
+  .hero .deadline{text-align:right; font-size:12px; color:var(--muted); max-width:180px;}
+  .hero .deadline b{color:var(--text); display:block; font-size:14px; margin-bottom:2px;}
+
+  /* Nav */
+  nav.section-nav{display:flex; border-bottom:1px solid var(--line);}
+  nav.section-nav button{
+    flex:1; background:none; border:none; color:var(--muted); font-family:'Karla',sans-serif;
+    font-size:13px; font-weight:700; padding:13px 4px; cursor:pointer; border-bottom:2px solid transparent;
+  }
+  nav.section-nav button.active{color:var(--text); border-bottom-color:var(--gold);}
+
+  main{padding:18px;}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:16px; margin-bottom:14px;}
+  .muted{color:var(--muted);}
+  .small{font-size:12px;}
+  label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px;}
+  input[type=text], input[type=datetime-local], select{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:9px 10px; border-radius:3px; font-family:'Karla',sans-serif; font-size:14px; margin-bottom:10px;
+  }
+  button.primary{
+    background:var(--gold); color:#161C24; border:none; font-family:'Karla',sans-serif;
+    font-weight:700; font-size:14px; padding:11px 16px; border-radius:3px; cursor:pointer;
+  }
+  button.primary:disabled{opacity:0.4; cursor:not-allowed;}
+  button.ghost{
+    background:none; border:1px solid var(--line); color:var(--text); font-family:'Karla',sans-serif;
+    font-size:13px; padding:9px 14px; border-radius:3px; cursor:pointer;
+  }
+  button.tiny{
+    background:none; border:1px solid var(--line); color:var(--muted); font-family:'Karla',sans-serif;
+    font-size:11px; padding:4px 8px; border-radius:3px; cursor:pointer;
+  }
+
+  /* game row */
+  .game-row{border-bottom:1px solid var(--line); padding:14px 0;}
+  .game-row:last-child{border-bottom:none;}
+  .game-meta{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;}
+  .matchup{display:flex; gap:8px;}
+  .team-btn{
+    flex:1; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:12px 8px; border-radius:3px; cursor:pointer; text-align:center; font-size:14px; font-weight:700;
+  }
+  .team-btn.picked{background:var(--teal); border-color:var(--teal); color:#0D1B18;}
+  .team-btn .score{display:block; font-family:'Anton',sans-serif; font-size:20px; margin-top:2px;}
+  .team-btn.winner{outline:2px solid var(--gold);}
+  .lock-toggle{
+    margin-top:8px; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); cursor:pointer;
+  }
+  .lock-toggle.active{color:var(--gold); font-weight:700;}
+  .lock-star{font-size:15px;}
+  .final-tag{color:var(--muted); font-size:10px; text-transform:uppercase;}
+
+  /* standings table */
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; padding:0 6px 8px; font-weight:400;}
+  td{padding:9px 6px; border-top:1px solid var(--line); font-size:14px;}
+  td.rank{font-family:'Anton',sans-serif; color:var(--gold); width:26px;}
+  td.pts{font-family:'Anton',sans-serif; font-size:17px;}
+  tr.winner-row td{color:var(--gold);}
+  .pill{display:inline-block; background:var(--panel-2); border-radius:3px; padding:2px 7px; font-size:11px; color:var(--muted);}
+
+  .submitted-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .name-chip{background:var(--panel-2); border-radius:3px; padding:5px 9px; font-size:12px;}
+  .name-chip.you{border:1px solid var(--gold); color:var(--gold);}
+
+  .schedule-item{
+    display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:13px; gap:8px;
+  }
+  .schedule-item:last-child{border-bottom:none;}
+  .schedule-item .info{flex:1;}
+  .schedule-item .kick{color:var(--muted); font-size:11px;}
+
+  .error-box{background:rgba(193,68,59,0.12); border:1px solid var(--red); color:#F0C9C6; padding:10px 12px; border-radius:3px; font-size:12px; margin-bottom:10px;}
+  .notice-box{background:rgba(63,167,150,0.12); border:1px solid var(--teal); color:#CFEFE9; padding:10px 12px; border-radius:3px; font-size:12px; margin-bottom:10px;}
+  .login-bar{display:flex; gap:8px; padding:12px 18px; background:var(--panel); border-bottom:1px solid var(--line);}
+  .login-bar input{margin:0;}
+  .empty{color:var(--muted); font-size:13px; padding:30px 0; text-align:center;}
+  .foot-note{color:var(--muted); font-size:11px; margin-top:16px; line-height:1.5; border-top:1px solid var(--line); padding-top:12px;}
+</style>
+</head>
+<body>
+<div id="app">
+    <header>
+      <div>
+        <h1>PICK<span class="tag">'EM</span></h1>
+        <div class="sub">2026 NFL SEASON · $5 BUY-IN · LOCAL MODE</div>
+      </div>
+      <button class="commish-btn " onclick="toggleCommish()">Commissioner</button>
+    </header>
+
+    
+
+    <div class="week-tabs">
+      
+        <div class="week-tab active " onclick="setWeek(1)">1</div>
+      
+        <div class="week-tab  " onclick="setWeek(2)">2</div>
+      
+        <div class="week-tab  " onclick="setWeek(3)">3</div>
+      
+        <div class="week-tab  " onclick="setWeek(4)">4</div>
+      
+        <div class="week-tab  " onclick="setWeek(5)">5</div>
+      
+        <div class="week-tab  " onclick="setWeek(6)">6</div>
+      
+        <div class="week-tab  " onclick="setWeek(7)">7</div>
+      
+        <div class="week-tab  " onclick="setWeek(8)">8</div>
+      
+        <div class="week-tab  " onclick="setWeek(9)">9</div>
+      
+        <div class="week-tab  " onclick="setWeek(10)">10</div>
+      
+        <div class="week-tab  " onclick="setWeek(11)">11</div>
+      
+        <div class="week-tab  " onclick="setWeek(12)">12</div>
+      
+        <div class="week-tab  " onclick="setWeek(13)">13</div>
+      
+        <div class="week-tab  " onclick="setWeek(14)">14</div>
+      
+        <div class="week-tab  " onclick="setWeek(15)">15</div>
+      
+        <div class="week-tab  " onclick="setWeek(16)">16</div>
+      
+        <div class="week-tab  " onclick="setWeek(17)">17</div>
+      
+        <div class="week-tab  " onclick="setWeek(18)">18</div>
+      
+    </div>
+
+    <div class="hero">
+      <div>
+        <div class="leader-label">Season Leader</div>
+        <div class="leader-name muted">No picks graded yet</div>
+      </div>
+      <div class="deadline">No games set<br>for Week 1 yet</div>
+    </div>
+
+    <nav class="section-nav">
+      <button class="active" onclick="setSection(&#39;picks&#39;)">Make Picks</button>
+      <button class="" onclick="setSection(&#39;weekly&#39;)">Weekly</button>
+      <button class="" onclick="setSection(&#39;standings&#39;)">Standings</button>
+      
+    </nav>
+
+    <main>
+      
+      
+      
+      <div class="empty">No games have been set for Week 1 yet. Check back once the commissioner sets this week’s games.</div>
+      
+      
+      
+
+      <div class="foot-note">
+        Scoring: correct pick +1, incorrect 0. Your Lock pick is worth +2 total if correct, or −1 if wrong (instead of the usual +1/0).
+        Tiebreakers: most correct locks, then best overall pick record. Weekly wins are bragging rights only — season total decides the winner after Week 18.
+      </div>
+    </main>
+  </div>
+
+<script src="./2026 NFL Pick&#39;em_files/supabase-js@2"></script>
+<script>
+const SEASON_YEAR = 2026;
+const EMBEDDED_SCHEDULE = {"1":[{"away":"New England Patriots","home":"Seattle Seahawks","kickoff":"Wed September 9, 8:20 PM ET","kickoff_iso":"2026-09-10T00:20:00Z"},{"away":"San Francisco 49ers","home":"Los Angeles Rams","kickoff":"Thu September 10, 8:35 PM ET","kickoff_iso":"2026-09-11T00:35:00Z"},{"away":"Chicago Bears","home":"Carolina Panthers","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Tampa Bay Buccaneers","home":"Cincinnati Bengals","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Baltimore Ravens","home":"Indianapolis Colts","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"New Orleans Saints","home":"Detroit Lions","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Buffalo Bills","home":"Houston Texans","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Cleveland Browns","home":"Jacksonville Jaguars","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"New York Jets","home":"Tennessee Titans","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Atlanta Falcons","home":"Pittsburgh Steelers","kickoff":"Sun September 13, 1:00 PM ET","kickoff_iso":"2026-09-13T17:00:00Z"},{"away":"Green Bay Packers","home":"Minnesota Vikings","kickoff":"Sun September 13, 4:25 PM ET","kickoff_iso":"2026-09-13T20:25:00Z"},{"away":"Washington Commanders","home":"Philadelphia Eagles","kickoff":"Sun September 13, 4:25 PM ET","kickoff_iso":"2026-09-13T20:25:00Z"},{"away":"Miami Dolphins","home":"Las Vegas Raiders","kickoff":"Sun September 13, 4:25 PM ET","kickoff_iso":"2026-09-13T20:25:00Z"},{"away":"Arizona Cardinals","home":"Los Angeles Chargers","kickoff":"Sun September 13, 4:25 PM ET","kickoff_iso":"2026-09-13T20:25:00Z"},{"away":"Dallas Cowboys","home":"New York Giants","kickoff":"Sun September 13, 8:20 PM ET","kickoff_iso":"2026-09-14T00:20:00Z"},{"away":"Denver Broncos","home":"Kansas City Chiefs","kickoff":"Mon September 14, 8:15 PM ET","kickoff_iso":"2026-09-15T00:15:00Z"}],"2":[{"away":"Detroit Lions","home":"Buffalo Bills","kickoff":"Thu September 17, 8:15 PM ET","kickoff_iso":"2026-09-18T00:15:00Z"},{"away":"Carolina Panthers","home":"Atlanta Falcons","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Minnesota Vikings","home":"Chicago Bears","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Cincinnati Bengals","home":"Houston Texans","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Pittsburgh Steelers","home":"New England Patriots","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Green Bay Packers","home":"New York Jets","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Philadelphia Eagles","home":"Tennessee Titans","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"New Orleans Saints","home":"Baltimore Ravens","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Cleveland Browns","home":"Tampa Bay Buccaneers","kickoff":"Sun September 20, 1:00 PM ET","kickoff_iso":"2026-09-20T17:00:00Z"},{"away":"Jacksonville Jaguars","home":"Denver Broncos","kickoff":"Sun September 20, 4:05 PM ET","kickoff_iso":"2026-09-20T20:05:00Z"},{"away":"Las Vegas Raiders","home":"Los Angeles Chargers","kickoff":"Sun September 20, 4:05 PM ET","kickoff_iso":"2026-09-20T20:05:00Z"},{"away":"Seattle Seahawks","home":"Arizona Cardinals","kickoff":"Sun September 20, 4:25 PM ET","kickoff_iso":"2026-09-20T20:25:00Z"},{"away":"Washington Commanders","home":"Dallas Cowboys","kickoff":"Sun September 20, 4:25 PM ET","kickoff_iso":"2026-09-20T20:25:00Z"},{"away":"Miami Dolphins","home":"San Francisco 49ers","kickoff":"Sun September 20, 4:25 PM ET","kickoff_iso":"2026-09-20T20:25:00Z"},{"away":"Indianapolis Colts","home":"Kansas City Chiefs","kickoff":"Sun September 20, 8:20 PM ET","kickoff_iso":"2026-09-21T00:20:00Z"},{"away":"New York Giants","home":"Los Angeles Rams","kickoff":"Mon September 21, 8:15 PM ET","kickoff_iso":"2026-09-22T00:15:00Z"}],"3":[{"away":"Atlanta Falcons","home":"Green Bay Packers","kickoff":"Thu September 24, 8:15 PM ET","kickoff_iso":"2026-09-25T00:15:00Z"},{"away":"Los Angeles Chargers","home":"Buffalo Bills","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Carolina Panthers","home":"Cleveland Browns","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Houston Texans","home":"Indianapolis Colts","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"New York Jets","home":"Detroit Lions","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"New England Patriots","home":"Jacksonville Jaguars","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Kansas City Chiefs","home":"Miami Dolphins","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Tennessee Titans","home":"New York Giants","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Cincinnati Bengals","home":"Pittsburgh Steelers","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Seattle Seahawks","home":"Washington Commanders","kickoff":"Sun September 27, 1:00 PM ET","kickoff_iso":"2026-09-27T17:00:00Z"},{"away":"Arizona Cardinals","home":"San Francisco 49ers","kickoff":"Sun September 27, 4:05 PM ET","kickoff_iso":"2026-09-27T20:05:00Z"},{"away":"Minnesota Vikings","home":"Tampa Bay Buccaneers","kickoff":"Sun September 27, 4:05 PM ET","kickoff_iso":"2026-09-27T20:05:00Z"},{"away":"Baltimore Ravens","home":"Dallas Cowboys","kickoff":"Sun September 27, 4:25 PM ET","kickoff_iso":"2026-09-27T20:25:00Z"},{"away":"Las Vegas Raiders","home":"New Orleans Saints","kickoff":"Sun September 27, 4:25 PM ET","kickoff_iso":"2026-09-27T20:25:00Z"},{"away":"Los Angeles Rams","home":"Denver Broncos","kickoff":"Sun September 27, 8:20 PM ET","kickoff_iso":"2026-09-28T00:20:00Z"},{"away":"Philadelphia Eagles","home":"Chicago Bears","kickoff":"Mon September 28, 8:15 PM ET","kickoff_iso":"2026-09-29T00:15:00Z"}],"4":[{"away":"Pittsburgh Steelers","home":"Cleveland Browns","kickoff":"Thu October 1, 8:15 PM ET","kickoff_iso":"2026-10-02T00:15:00Z"},{"away":"Indianapolis Colts","home":"Washington Commanders","kickoff":"Sun October 4, 9:30 AM ET","kickoff_iso":"2026-10-04T13:30:00Z"},{"away":"New England Patriots","home":"Buffalo Bills","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"New York Jets","home":"Chicago Bears","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Jacksonville Jaguars","home":"Cincinnati Bengals","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Dallas Cowboys","home":"Houston Texans","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Arizona Cardinals","home":"New York Giants","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Los Angeles Rams","home":"Philadelphia Eagles","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Tennessee Titans","home":"Baltimore Ravens","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Green Bay Packers","home":"Tampa Bay Buccaneers","kickoff":"Sun October 4, 1:00 PM ET","kickoff_iso":"2026-10-04T17:00:00Z"},{"away":"Miami Dolphins","home":"Minnesota Vikings","kickoff":"Sun October 4, 4:05 PM ET","kickoff_iso":"2026-10-04T20:05:00Z"},{"away":"Kansas City Chiefs","home":"Las Vegas Raiders","kickoff":"Sun October 4, 4:25 PM ET","kickoff_iso":"2026-10-04T20:25:00Z"},{"away":"Los Angeles Chargers","home":"Seattle Seahawks","kickoff":"Sun October 4, 4:25 PM ET","kickoff_iso":"2026-10-04T20:25:00Z"},{"away":"Denver Broncos","home":"San Francisco 49ers","kickoff":"Sun October 4, 4:25 PM ET","kickoff_iso":"2026-10-04T20:25:00Z"},{"away":"Detroit Lions","home":"Carolina Panthers","kickoff":"Sun October 4, 8:20 PM ET","kickoff_iso":"2026-10-05T00:20:00Z"},{"away":"Atlanta Falcons","home":"New Orleans Saints","kickoff":"Mon October 5, 8:15 PM ET","kickoff_iso":"2026-10-06T00:15:00Z"}],"5":[{"away":"Tampa Bay Buccaneers","home":"Dallas Cowboys","kickoff":"Thu October 8, 8:15 PM ET","kickoff_iso":"2026-10-09T00:15:00Z"},{"away":"Philadelphia Eagles","home":"Jacksonville Jaguars","kickoff":"Sun October 11, 9:30 AM ET","kickoff_iso":"2026-10-11T13:30:00Z"},{"away":"Cincinnati Bengals","home":"Miami Dolphins","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Minnesota Vikings","home":"New Orleans Saints","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Las Vegas Raiders","home":"New England Patriots","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Cleveland Browns","home":"New York Jets","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Houston Texans","home":"Tennessee Titans","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Indianapolis Colts","home":"Pittsburgh Steelers","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"New York Giants","home":"Washington Commanders","kickoff":"Sun October 11, 1:00 PM ET","kickoff_iso":"2026-10-11T17:00:00Z"},{"away":"Denver Broncos","home":"Los Angeles Chargers","kickoff":"Sun October 11, 4:05 PM ET","kickoff_iso":"2026-10-11T20:05:00Z"},{"away":"Detroit Lions","home":"Arizona Cardinals","kickoff":"Sun October 11, 4:25 PM ET","kickoff_iso":"2026-10-11T20:25:00Z"},{"away":"Chicago Bears","home":"Green Bay Packers","kickoff":"Sun October 11, 4:25 PM ET","kickoff_iso":"2026-10-11T20:25:00Z"},{"away":"San Francisco 49ers","home":"Seattle Seahawks","kickoff":"Sun October 11, 4:25 PM ET","kickoff_iso":"2026-10-11T20:25:00Z"},{"away":"Baltimore Ravens","home":"Atlanta Falcons","kickoff":"Sun October 11, 8:20 PM ET","kickoff_iso":"2026-10-12T00:20:00Z"},{"away":"Buffalo Bills","home":"Los Angeles Rams","kickoff":"Mon October 12, 8:15 PM ET","kickoff_iso":"2026-10-13T00:15:00Z"}],"6":[{"away":"Seattle Seahawks","home":"Denver Broncos","kickoff":"Thu October 15, 8:15 PM ET","kickoff_iso":"2026-10-16T00:15:00Z"},{"away":"Houston Texans","home":"Jacksonville Jaguars","kickoff":"Sun October 18, 9:30 AM ET","kickoff_iso":"2026-10-18T13:30:00Z"},{"away":"Chicago Bears","home":"Atlanta Falcons","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"Baltimore Ravens","home":"Cleveland Browns","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"Tennessee Titans","home":"Indianapolis Colts","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"New York Jets","home":"New England Patriots","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"New Orleans Saints","home":"New York Giants","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"Carolina Panthers","home":"Philadelphia Eagles","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"Pittsburgh Steelers","home":"Tampa Bay Buccaneers","kickoff":"Sun October 18, 1:00 PM ET","kickoff_iso":"2026-10-18T17:00:00Z"},{"away":"Arizona Cardinals","home":"Los Angeles Rams","kickoff":"Sun October 18, 4:05 PM ET","kickoff_iso":"2026-10-18T20:05:00Z"},{"away":"Los Angeles Chargers","home":"Kansas City Chiefs","kickoff":"Sun October 18, 4:25 PM ET","kickoff_iso":"2026-10-18T20:25:00Z"},{"away":"Buffalo Bills","home":"Las Vegas Raiders","kickoff":"Sun October 18, 4:25 PM ET","kickoff_iso":"2026-10-18T20:25:00Z"},{"away":"Dallas Cowboys","home":"Green Bay Packers","kickoff":"Sun October 18, 8:20 PM ET","kickoff_iso":"2026-10-19T00:20:00Z"},{"away":"Washington Commanders","home":"San Francisco 49ers","kickoff":"Mon October 19, 8:15 PM ET","kickoff_iso":"2026-10-20T00:15:00Z"}],"7":[{"away":"New England Patriots","home":"Chicago Bears","kickoff":"Thu October 22, 8:15 PM ET","kickoff_iso":"2026-10-23T00:15:00Z"},{"away":"Pittsburgh Steelers","home":"New Orleans Saints","kickoff":"Sun October 25, 9:30 AM ET","kickoff_iso":"2026-10-25T13:30:00Z"},{"away":"San Francisco 49ers","home":"Atlanta Falcons","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Tampa Bay Buccaneers","home":"Carolina Panthers","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"New York Giants","home":"Houston Texans","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Indianapolis Colts","home":"Minnesota Vikings","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Miami Dolphins","home":"New York Jets","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Cleveland Browns","home":"Tennessee Titans","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Cincinnati Bengals","home":"Baltimore Ravens","kickoff":"Sun October 25, 1:00 PM ET","kickoff_iso":"2026-10-25T17:00:00Z"},{"away":"Denver Broncos","home":"Arizona Cardinals","kickoff":"Sun October 25, 4:05 PM ET","kickoff_iso":"2026-10-25T20:05:00Z"},{"away":"Green Bay Packers","home":"Detroit Lions","kickoff":"Sun October 25, 4:25 PM ET","kickoff_iso":"2026-10-25T20:25:00Z"},{"away":"Los Angeles Rams","home":"Las Vegas Raiders","kickoff":"Sun October 25, 4:25 PM ET","kickoff_iso":"2026-10-25T20:25:00Z"},{"away":"Kansas City Chiefs","home":"Seattle Seahawks","kickoff":"Sun October 25, 8:20 PM ET","kickoff_iso":"2026-10-26T00:20:00Z"},{"away":"Dallas Cowboys","home":"Philadelphia Eagles","kickoff":"Mon October 26, 8:15 PM ET","kickoff_iso":"2026-10-27T00:15:00Z"}],"8":[{"away":"Carolina Panthers","home":"Green Bay Packers","kickoff":"Thu October 29, 8:15 PM ET","kickoff_iso":"2026-10-30T00:15:00Z"},{"away":"Baltimore Ravens","home":"Buffalo Bills","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Tennessee Titans","home":"Cincinnati Bengals","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Arizona Cardinals","home":"Dallas Cowboys","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Minnesota Vikings","home":"Detroit Lions","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Indianapolis Colts","home":"Jacksonville Jaguars","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Las Vegas Raiders","home":"New York Jets","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Cleveland Browns","home":"Pittsburgh Steelers","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Atlanta Falcons","home":"Tampa Bay Buccaneers","kickoff":"Sun November 1, 1:00 PM ET","kickoff_iso":"2026-11-01T18:00:00Z"},{"away":"Los Angeles Chargers","home":"Los Angeles Rams","kickoff":"Sun November 1, 4:05 PM ET","kickoff_iso":"2026-11-01T21:05:00Z"},{"away":"Kansas City Chiefs","home":"Denver Broncos","kickoff":"Sun November 1, 4:25 PM ET","kickoff_iso":"2026-11-01T21:25:00Z"},{"away":"New England Patriots","home":"Miami Dolphins","kickoff":"Sun November 1, 4:25 PM ET","kickoff_iso":"2026-11-01T21:25:00Z"},{"away":"Philadelphia Eagles","home":"Washington Commanders","kickoff":"Sun November 1, 8:20 PM ET","kickoff_iso":"2026-11-02T01:20:00Z"},{"away":"Chicago Bears","home":"Seattle Seahawks","kickoff":"Mon November 2, 8:15 PM ET","kickoff_iso":"2026-11-03T01:15:00Z"}],"9":[{"away":"Jacksonville Jaguars","home":"Baltimore Ravens","kickoff":"Thu November 5, 8:15 PM ET","kickoff_iso":"2026-11-06T01:15:00Z"},{"away":"Cincinnati Bengals","home":"Atlanta Falcons","kickoff":"Sun November 8, 9:30 AM ET","kickoff_iso":"2026-11-08T14:30:00Z"},{"away":"Denver Broncos","home":"Carolina Panthers","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"Dallas Cowboys","home":"Indianapolis Colts","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"New York Jets","home":"Kansas City Chiefs","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"Detroit Lions","home":"Miami Dolphins","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"Cleveland Browns","home":"New Orleans Saints","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"New York Giants","home":"Philadelphia Eagles","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"Los Angeles Rams","home":"Washington Commanders","kickoff":"Sun November 8, 1:00 PM ET","kickoff_iso":"2026-11-08T18:00:00Z"},{"away":"Houston Texans","home":"Los Angeles Chargers","kickoff":"Sun November 8, 4:05 PM ET","kickoff_iso":"2026-11-08T21:05:00Z"},{"away":"Las Vegas Raiders","home":"San Francisco 49ers","kickoff":"Sun November 8, 4:05 PM ET","kickoff_iso":"2026-11-08T21:05:00Z"},{"away":"Green Bay Packers","home":"New England Patriots","kickoff":"Sun November 8, 4:25 PM ET","kickoff_iso":"2026-11-08T21:25:00Z"},{"away":"Arizona Cardinals","home":"Seattle Seahawks","kickoff":"Sun November 8, 4:25 PM ET","kickoff_iso":"2026-11-08T21:25:00Z"},{"away":"Tampa Bay Buccaneers","home":"Chicago Bears","kickoff":"Sun November 8, 8:20 PM ET","kickoff_iso":"2026-11-09T01:20:00Z"},{"away":"Buffalo Bills","home":"Minnesota Vikings","kickoff":"Mon November 9, 8:15 PM ET","kickoff_iso":"2026-11-10T01:15:00Z"}],"10":[{"away":"Washington Commanders","home":"New York Giants","kickoff":"Thu November 12, 8:15 PM ET","kickoff_iso":"2026-11-13T01:15:00Z"},{"away":"New England Patriots","home":"Detroit Lions","kickoff":"Sun November 15, 9:30 AM ET","kickoff_iso":"2026-11-15T14:30:00Z"},{"away":"Kansas City Chiefs","home":"Atlanta Falcons","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Houston Texans","home":"Cleveland Browns","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Miami Dolphins","home":"Indianapolis Colts","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Minnesota Vikings","home":"Green Bay Packers","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Carolina Panthers","home":"New Orleans Saints","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Buffalo Bills","home":"New York Jets","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Jacksonville Jaguars","home":"Tennessee Titans","kickoff":"Sun November 15, 1:00 PM ET","kickoff_iso":"2026-11-15T18:00:00Z"},{"away":"Los Angeles Rams","home":"Arizona Cardinals","kickoff":"Sun November 15, 4:05 PM ET","kickoff_iso":"2026-11-15T21:05:00Z"},{"away":"Seattle Seahawks","home":"Las Vegas Raiders","kickoff":"Sun November 15, 4:05 PM ET","kickoff_iso":"2026-11-15T21:05:00Z"},{"away":"San Francisco 49ers","home":"Dallas Cowboys","kickoff":"Sun November 15, 4:25 PM ET","kickoff_iso":"2026-11-15T21:25:00Z"},{"away":"Pittsburgh Steelers","home":"Cincinnati Bengals","kickoff":"Sun November 15, 8:20 PM ET","kickoff_iso":"2026-11-16T01:20:00Z"},{"away":"Los Angeles Chargers","home":"Baltimore Ravens","kickoff":"Mon November 16, 8:15 PM ET","kickoff_iso":"2026-11-17T01:15:00Z"}],"11":[{"away":"Indianapolis Colts","home":"Houston Texans","kickoff":"Thu November 19, 8:15 PM ET","kickoff_iso":"2026-11-20T01:15:00Z"},{"away":"Miami Dolphins","home":"Buffalo Bills","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"Baltimore Ravens","home":"Carolina Panthers","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"New Orleans Saints","home":"Chicago Bears","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"Tennessee Titans","home":"Dallas Cowboys","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"Tampa Bay Buccaneers","home":"Detroit Lions","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"Arizona Cardinals","home":"Kansas City Chiefs","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"Jacksonville Jaguars","home":"New York Giants","kickoff":"Sun November 22, 1:00 PM ET","kickoff_iso":"2026-11-22T18:00:00Z"},{"away":"New York Jets","home":"Los Angeles Chargers","kickoff":"Sun November 22, 4:05 PM ET","kickoff_iso":"2026-11-22T21:05:00Z"},{"away":"Las Vegas Raiders","home":"Denver Broncos","kickoff":"Sun November 22, 4:25 PM ET","kickoff_iso":"2026-11-22T21:25:00Z"},{"away":"Pittsburgh Steelers","home":"Philadelphia Eagles","kickoff":"Sun November 22, 4:25 PM ET","kickoff_iso":"2026-11-22T21:25:00Z"},{"away":"Minnesota Vikings","home":"San Francisco 49ers","kickoff":"Sun November 22, 8:20 PM ET","kickoff_iso":"2026-11-23T01:20:00Z"},{"away":"Cincinnati Bengals","home":"Washington Commanders","kickoff":"Mon November 23, 8:15 PM ET","kickoff_iso":"2026-11-24T01:15:00Z"}],"12":[{"away":"Green Bay Packers","home":"Los Angeles Rams","kickoff":"Wed November 25, 8:00 PM ET","kickoff_iso":"2026-11-26T01:00:00Z"},{"away":"Chicago Bears","home":"Detroit Lions","kickoff":"Thu November 26, 1:00 PM ET","kickoff_iso":"2026-11-26T18:00:00Z"},{"away":"Philadelphia Eagles","home":"Dallas Cowboys","kickoff":"Thu November 26, 4:30 PM ET","kickoff_iso":"2026-11-26T21:30:00Z"},{"away":"Kansas City Chiefs","home":"Buffalo Bills","kickoff":"Thu November 26, 8:20 PM ET","kickoff_iso":"2026-11-27T01:20:00Z"},{"away":"Denver Broncos","home":"Pittsburgh Steelers","kickoff":"Fri November 27, 3:00 PM ET","kickoff_iso":"2026-11-27T20:00:00Z"},{"away":"New Orleans Saints","home":"Cincinnati Bengals","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"Las Vegas Raiders","home":"Cleveland Browns","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"New York Giants","home":"Indianapolis Colts","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"Baltimore Ravens","home":"Houston Texans","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"New York Jets","home":"Miami Dolphins","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"Atlanta Falcons","home":"Minnesota Vikings","kickoff":"Sun November 29, 1:00 PM ET","kickoff_iso":"2026-11-29T18:00:00Z"},{"away":"Tennessee Titans","home":"Jacksonville Jaguars","kickoff":"Sun November 29, 4:05 PM ET","kickoff_iso":"2026-11-29T21:05:00Z"},{"away":"Washington Commanders","home":"Arizona Cardinals","kickoff":"Sun November 29, 4:25 PM ET","kickoff_iso":"2026-11-29T21:25:00Z"},{"away":"Seattle Seahawks","home":"San Francisco 49ers","kickoff":"Sun November 29, 4:25 PM ET","kickoff_iso":"2026-11-29T21:25:00Z"},{"away":"New England Patriots","home":"Los Angeles Chargers","kickoff":"Sun November 29, 8:20 PM ET","kickoff_iso":"2026-11-30T01:20:00Z"},{"away":"Carolina Panthers","home":"Tampa Bay Buccaneers","kickoff":"Mon November 30, 8:15 PM ET","kickoff_iso":"2026-12-01T01:15:00Z"}],"13":[{"away":"Kansas City Chiefs","home":"Los Angeles Rams","kickoff":"Thu December 3, 8:15 PM ET","kickoff_iso":"2026-12-04T01:15:00Z"},{"away":"Detroit Lions","home":"Atlanta Falcons","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Jacksonville Jaguars","home":"Chicago Bears","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Cincinnati Bengals","home":"Cleveland Browns","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Green Bay Packers","home":"New Orleans Saints","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"San Francisco 49ers","home":"New York Giants","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Washington Commanders","home":"Tennessee Titans","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Los Angeles Chargers","home":"Tampa Bay Buccaneers","kickoff":"Sun December 6, 1:00 PM ET","kickoff_iso":"2026-12-06T18:00:00Z"},{"away":"Philadelphia Eagles","home":"Arizona Cardinals","kickoff":"Sun December 6, 4:05 PM ET","kickoff_iso":"2026-12-06T21:05:00Z"},{"away":"Miami Dolphins","home":"Denver Broncos","kickoff":"Sun December 6, 4:05 PM ET","kickoff_iso":"2026-12-06T21:05:00Z"},{"away":"Carolina Panthers","home":"Minnesota Vikings","kickoff":"Sun December 6, 4:25 PM ET","kickoff_iso":"2026-12-06T21:25:00Z"},{"away":"Buffalo Bills","home":"New England Patriots","kickoff":"Sun December 6, 4:25 PM ET","kickoff_iso":"2026-12-06T21:25:00Z"},{"away":"Houston Texans","home":"Pittsburgh Steelers","kickoff":"Sun December 6, 8:20 PM ET","kickoff_iso":"2026-12-07T01:20:00Z"},{"away":"Dallas Cowboys","home":"Seattle Seahawks","kickoff":"Mon December 7, 8:15 PM ET","kickoff_iso":"2026-12-08T01:15:00Z"}],"14":[{"away":"Minnesota Vikings","home":"New England Patriots","kickoff":"Thu December 10, 8:15 PM ET","kickoff_iso":"2026-12-11T01:15:00Z"},{"away":"New Orleans Saints","home":"Carolina Panthers","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Atlanta Falcons","home":"Cleveland Browns","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Tennessee Titans","home":"Detroit Lions","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Chicago Bears","home":"Miami Dolphins","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Denver Broncos","home":"New York Jets","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Indianapolis Colts","home":"Philadelphia Eagles","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Tampa Bay Buccaneers","home":"Baltimore Ravens","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Houston Texans","home":"Washington Commanders","kickoff":"Sun December 13, 1:00 PM ET","kickoff_iso":"2026-12-13T18:00:00Z"},{"away":"Los Angeles Chargers","home":"Las Vegas Raiders","kickoff":"Sun December 13, 4:05 PM ET","kickoff_iso":"2026-12-13T21:05:00Z"},{"away":"Kansas City Chiefs","home":"Cincinnati Bengals","kickoff":"Sun December 13, 4:25 PM ET","kickoff_iso":"2026-12-13T21:25:00Z"},{"away":"New York Giants","home":"Seattle Seahawks","kickoff":"Sun December 13, 4:25 PM ET","kickoff_iso":"2026-12-13T21:25:00Z"},{"away":"Los Angeles Rams","home":"San Francisco 49ers","kickoff":"Sun December 13, 4:25 PM ET","kickoff_iso":"2026-12-13T21:25:00Z"},{"away":"Buffalo Bills","home":"Green Bay Packers","kickoff":"Sun December 13, 8:20 PM ET","kickoff_iso":"2026-12-14T01:20:00Z"},{"away":"Pittsburgh Steelers","home":"Jacksonville Jaguars","kickoff":"Mon December 14, 8:15 PM ET","kickoff_iso":"2026-12-15T01:15:00Z"}],"15":[{"away":"San Francisco 49ers","home":"Los Angeles Chargers","kickoff":"Thu December 17, 8:15 PM ET","kickoff_iso":"2026-12-18T01:15:00Z"},{"away":"Seattle Seahawks","home":"Philadelphia Eagles","kickoff":"Sat December 19, 5:00 PM ET","kickoff_iso":"2026-12-19T22:00:00Z"},{"away":"Chicago Bears","home":"Buffalo Bills","kickoff":"Sat December 19, 8:20 PM ET","kickoff_iso":"2026-12-20T01:20:00Z"},{"away":"Cincinnati Bengals","home":"Carolina Panthers","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Miami Dolphins","home":"Green Bay Packers","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Jacksonville Jaguars","home":"Houston Texans","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Cleveland Browns","home":"New York Giants","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Indianapolis Colts","home":"Tennessee Titans","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Baltimore Ravens","home":"Pittsburgh Steelers","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"New Orleans Saints","home":"Tampa Bay Buccaneers","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"Atlanta Falcons","home":"Washington Commanders","kickoff":"Sun December 20, 1:00 PM ET","kickoff_iso":"2026-12-20T18:00:00Z"},{"away":"New York Jets","home":"Arizona Cardinals","kickoff":"Sun December 20, 4:05 PM ET","kickoff_iso":"2026-12-20T21:05:00Z"},{"away":"Denver Broncos","home":"Las Vegas Raiders","kickoff":"Sun December 20, 4:25 PM ET","kickoff_iso":"2026-12-20T21:25:00Z"},{"away":"Dallas Cowboys","home":"Los Angeles Rams","kickoff":"Sun December 20, 4:25 PM ET","kickoff_iso":"2026-12-20T21:25:00Z"},{"away":"Detroit Lions","home":"Minnesota Vikings","kickoff":"Sun December 20, 8:20 PM ET","kickoff_iso":"2026-12-21T01:20:00Z"},{"away":"New England Patriots","home":"Kansas City Chiefs","kickoff":"Mon December 21, 8:15 PM ET","kickoff_iso":"2026-12-22T01:15:00Z"}],"16":[{"away":"Houston Texans","home":"Philadelphia Eagles","kickoff":"Thu December 24, 8:15 PM ET","kickoff_iso":"2026-12-25T01:15:00Z"},{"away":"Green Bay Packers","home":"Chicago Bears","kickoff":"Fri December 25, 1:00 PM ET","kickoff_iso":"2026-12-25T18:00:00Z"},{"away":"Buffalo Bills","home":"Denver Broncos","kickoff":"Fri December 25, 4:30 PM ET","kickoff_iso":"2026-12-25T21:30:00Z"},{"away":"Los Angeles Rams","home":"Seattle Seahawks","kickoff":"Fri December 25, 8:15 PM ET","kickoff_iso":"2026-12-26T01:15:00Z"},{"away":"Tampa Bay Buccaneers","home":"Atlanta Falcons","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Cincinnati Bengals","home":"Indianapolis Colts","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Los Angeles Chargers","home":"Miami Dolphins","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Washington Commanders","home":"Minnesota Vikings","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Arizona Cardinals","home":"New Orleans Saints","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"New England Patriots","home":"New York Jets","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Carolina Panthers","home":"Pittsburgh Steelers","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Cleveland Browns","home":"Baltimore Ravens","kickoff":"Sun December 27, 1:00 PM ET","kickoff_iso":"2026-12-27T18:00:00Z"},{"away":"Tennessee Titans","home":"Las Vegas Raiders","kickoff":"Sun December 27, 4:05 PM ET","kickoff_iso":"2026-12-27T21:05:00Z"},{"away":"San Francisco 49ers","home":"Kansas City Chiefs","kickoff":"Sun December 27, 4:25 PM ET","kickoff_iso":"2026-12-27T21:25:00Z"},{"away":"Jacksonville Jaguars","home":"Dallas Cowboys","kickoff":"Sun December 27, 8:20 PM ET","kickoff_iso":"2026-12-28T01:20:00Z"},{"away":"New York Giants","home":"Detroit Lions","kickoff":"Mon December 28, 8:15 PM ET","kickoff_iso":"2026-12-29T01:15:00Z"}],"17":[{"away":"Baltimore Ravens","home":"Cincinnati Bengals","kickoff":"Thu December 31, 8:15 PM ET","kickoff_iso":"2027-01-01T01:15:00Z"},{"away":"New Orleans Saints","home":"Atlanta Falcons","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Seattle Seahawks","home":"Carolina Panthers","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Indianapolis Colts","home":"Cleveland Browns","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"New York Giants","home":"Dallas Cowboys","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Washington Commanders","home":"Jacksonville Jaguars","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Buffalo Bills","home":"Miami Dolphins","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Denver Broncos","home":"New England Patriots","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Minnesota Vikings","home":"New York Jets","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Pittsburgh Steelers","home":"Tennessee Titans","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Kansas City Chiefs","home":"Los Angeles Chargers","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Los Angeles Rams","home":"Tampa Bay Buccaneers","kickoff":"Sun January 3, 1:00 PM ET","kickoff_iso":"2027-01-03T18:00:00Z"},{"away":"Las Vegas Raiders","home":"Arizona Cardinals","kickoff":"Sun January 3, 4:05 PM ET","kickoff_iso":"2027-01-03T21:05:00Z"},{"away":"Detroit Lions","home":"Chicago Bears","kickoff":"Sun January 3, 4:25 PM ET","kickoff_iso":"2027-01-03T21:25:00Z"},{"away":"Philadelphia Eagles","home":"San Francisco 49ers","kickoff":"Sun January 3, 8:20 PM ET","kickoff_iso":"2027-01-04T01:20:00Z"},{"away":"Houston Texans","home":"Green Bay Packers","kickoff":"Mon January 4, 8:15 PM ET","kickoff_iso":"2027-01-05T01:15:00Z"}],"18":[{"away":"New York Jets","home":"Buffalo Bills","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Atlanta Falcons","home":"Carolina Panthers","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Cleveland Browns","home":"Cincinnati Bengals","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Jacksonville Jaguars","home":"Indianapolis Colts","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"San Francisco 49ers","home":"Arizona Cardinals","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Los Angeles Chargers","home":"Denver Broncos","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Detroit Lions","home":"Green Bay Packers","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Tennessee Titans","home":"Houston Texans","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Las Vegas Raiders","home":"Kansas City Chiefs","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Chicago Bears","home":"Minnesota Vikings","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Tampa Bay Buccaneers","home":"New Orleans Saints","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Miami Dolphins","home":"New England Patriots","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Philadelphia Eagles","home":"New York Giants","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Seattle Seahawks","home":"Los Angeles Rams","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Pittsburgh Steelers","home":"Baltimore Ravens","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"},{"away":"Dallas Cowboys","home":"Washington Commanders","kickoff":"Sun January 10, 1:00 PM ET","kickoff_iso":"2027-01-10T18:00:00Z"}]};
+const COMMISSIONER_PASSPHRASE = "gridiron26"; // change this string to set your own passphrase
+
+let state = {
+  week: 1,
+  section: "picks", // picks | standings | weekly | commish
+  commish: false,
+  playerName: "",
+  games: {},   // { "1": {deadline, games:[{id,away,home,kickoff,awayScore,homeScore,final}]} }
+  picks: {},   // { "1": { "Name": {picks:{gameId:'home'|'away'}, lockGameId, submittedAt} } }
+  players: [],
+  scheduleCache: {}, // week -> [{away,home,kickoff}]
+  loading: null,
+  error: null,
+  notice: null,
+  commishLoginOpen: false,
+};
+
+function clearNotices(){ state.error=null; state.notice=null; }
+
+// ---------- shared cloud storage ----------
+// Paste your Supabase Project URL and anon/publishable key here.
+// The database policies in the companion SQL file are designed for this private league app.
+const SUPABASE_URL = sb_publishable_H3HkFI_ldWLCd3FPYQkqgw_YMB-JCLi;
+const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcW1nZGZ3cG5icGRnZHpjdXBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMzA4NTUsImV4cCI6MjEwMzgwNjg1NX0.lrWMO3zMO11jwwLQJHJyNdIuQ4s_70saoRETu5epxNQ;
+const CLOUD_ENABLED = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_ANON_KEY.includes("PASTE_");
+const supabaseClient = CLOUD_ENABLED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+let realtimeChannel = null;
+
+function playerKey(name){ return name.trim().toLowerCase(); }
+function stableGameId(week, g){
+  const raw = `${week}|${g.away}|${g.home}|${g.kickoff_iso||g.kickoff||''}`;
+  return 'g_' + Array.from(raw).reduce((h,c)=>((h<<5)-h+c.charCodeAt(0))|0,0).toString(36).replace('-','n');
+}
+
+async function loadAll(){
+  if(!CLOUD_ENABLED){
+    // Local fallback for offline/testing only.
+    try{ state.games = JSON.parse(localStorage.getItem('nfl-pickem:games')||'{}'); }catch(e){ state.games={}; }
+    try{ state.picks = JSON.parse(localStorage.getItem('nfl-pickem:picks')||'{}'); }catch(e){ state.picks={}; }
+    try{ state.players = JSON.parse(localStorage.getItem('nfl-pickem:players')||'[]'); }catch(e){ state.players=[]; }
+    render();
+    return;
+  }
+  await loadRemoteAll(true);
+  subscribeRealtime();
+}
+
+async function loadRemoteAll(preserveDraft=false){
+  try{
+    const currentName = state.playerName.trim();
+    const currentWeek = state.week;
+    const draft = preserveDraft && currentName && state.picks[currentWeek] && state.picks[currentWeek][currentName] && !state.picks[currentWeek][currentName].submittedAt
+      ? JSON.parse(JSON.stringify(state.picks[currentWeek][currentName])) : null;
+
+    const [{data:weeks,error:we}, {data:rows,error:pe}, {data:players,error:ple}] = await Promise.all([
+      supabaseClient.from('weeks').select('week,deadline,games'),
+      supabaseClient.from('player_week_picks').select('player_key,player_name,week,picks,lock_game_id,submitted_at'),
+      supabaseClient.from('players').select('player_key,display_name').order('display_name')
+    ]);
+    if(we) throw we; if(pe) throw pe; if(ple) throw ple;
+
+    const nextGames={};
+    (weeks||[]).forEach(w=>{ nextGames[w.week]={deadline:w.deadline,games:Array.isArray(w.games)?w.games:[]}; });
+    const nextPicks={};
+    (rows||[]).forEach(r=>{
+      if(!nextPicks[r.week]) nextPicks[r.week]={};
+      nextPicks[r.week][r.player_name]={picks:r.picks||{},lockGameId:r.lock_game_id||null,submittedAt:r.submitted_at||null};
+    });
+    const nextPlayers=(players||[]).map(p=>p.display_name);
+
+    state.games=nextGames; state.picks=nextPicks; state.players=nextPlayers;
+    if(draft){
+      if(!state.picks[currentWeek]) state.picks[currentWeek]={};
+      state.picks[currentWeek][currentName]=draft;
+    }
+    state.error=null;
+    render();
+  }catch(e){
+    console.error(e);
+    state.error='Could not sync with the league database. Check your Supabase setup or internet connection.';
+    render();
+  }
+}
+
+async function saveGames(){
+  if(!CLOUD_ENABLED){ localStorage.setItem('nfl-pickem:games',JSON.stringify(state.games)); return; }
+  const wk=state.games[state.week];
+  const {error}=await supabaseClient.from('weeks').upsert({week:Number(state.week),deadline:wk?.deadline||null,games:wk?.games||[],updated_at:new Date().toISOString()},{onConflict:'week'});
+  if(error) throw error;
+}
+
+async function savePlayers(){
+  const name=state.playerName.trim();
+  if(!name) return;
+  if(!CLOUD_ENABLED){ localStorage.setItem('nfl-pickem:players',JSON.stringify(state.players)); return; }
+  const {error}=await supabaseClient.from('players').upsert({player_key:playerKey(name),display_name:name,updated_at:new Date().toISOString()},{onConflict:'player_key'});
+  if(error) throw error;
+}
+
+async function savePicks(){
+  const name=state.playerName.trim();
+  const entry=state.picks[state.week] && state.picks[state.week][name];
+  if(!name || !entry) return;
+  if(!CLOUD_ENABLED){ localStorage.setItem('nfl-pickem:picks',JSON.stringify(state.picks)); return; }
+  const wk=state.games[state.week];
+  const locked=wk?.deadline && new Date(wk.deadline)<=new Date();
+  if(locked) throw new Error('Picks are locked for this week.');
+  const {error}=await supabaseClient.from('player_week_picks').upsert({
+    player_key:playerKey(name), player_name:name, week:Number(state.week),
+    picks:entry.picks||{}, lock_game_id:entry.lockGameId||null,
+    submitted_at:entry.submittedAt||null, updated_at:new Date().toISOString()
+  },{onConflict:'player_key,week'});
+  if(error) throw error;
+}
+
+function subscribeRealtime(){
+  if(!CLOUD_ENABLED || realtimeChannel) return;
+  realtimeChannel=supabaseClient.channel('nfl-pickem-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'weeks'},()=>loadRemoteAll(true))
+    .on('postgres_changes',{event:'*',schema:'public',table:'player_week_picks'},()=>loadRemoteAll(true))
+    .on('postgres_changes',{event:'*',schema:'public',table:'players'},()=>loadRemoteAll(true))
+    .subscribe();
+}
+
+// ---------- AI-powered web search helper ----------
+async function askClaude(prompt){
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2000,
+      messages: [{role:"user", content: prompt}],
+      tools: [{type:"web_search_20250305", name:"web_search"}]
+    })
+  });
+  if(!response.ok) throw new Error("API request failed");
+  const data = await response.json();
+  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+  const cleaned = text.replace(/```json|```/g,"").trim();
+  const match = cleaned.match(/\[[\s\S]*\]/);
+  return JSON.parse(match ? match[0] : cleaned);
+}
+
+function loadScheduleForWeek(week){
+  clearNotices();
+  state.scheduleCache[week] = EMBEDDED_SCHEDULE[String(week)] || [];
+  state.loading = null;
+  render();
+}
+
+async function refreshScoresForWeek(week){
+  const wk = state.games[week];
+  if(!wk || !wk.games.length) return;
+  state.loading = "Checking scores for Week " + week + "\u2026";
+  render();
+  try{
+    const list = wk.games.map(g=>`${g.away} at ${g.home}`).join("; ");
+    const prompt = `For each of these ${SEASON_YEAR} NFL season games, search the web for whether the game is final and, if so, the final score: ${list}. `+
+      `Return ONLY valid JSON with no markdown formatting and no commentary: an array like `+
+      `[{"away":"Team Name","home":"Team Name","away_score": number or null, "home_score": number or null, "final": true or false}].`;
+    const results = await askClaude(prompt);
+    wk.games.forEach(g=>{
+      const match = results.find(r => r.away.toLowerCase().includes(g.away.toLowerCase().split(" ").pop()) && r.home.toLowerCase().includes(g.home.toLowerCase().split(" ").pop()));
+      if(match){
+        g.awayScore = match.away_score;
+        g.homeScore = match.home_score;
+        g.final = !!match.final;
+      }
+    });
+    await saveGames();
+    state.error = null;
+  }catch(e){
+    state.error = "Couldn't refresh scores automatically. Try again in a bit, or enter scores manually in Commissioner mode.";
+  }
+  state.loading = null;
+  render();
+}
+
+// ---------- scoring ----------
+function gradeWeek(week){
+  const wk = state.games[week];
+  const picksWk = state.picks[week] || {};
+  const out = {};
+  Object.keys(picksWk).forEach(player=>{
+    const entry = picksWk[player];
+    let points=0, correct=0, incorrect=0, lockCorrect=null;
+    if(wk){
+      wk.games.forEach(g=>{
+        if(!g.final || g.homeScore===null || g.awayScore===null || g.homeScore===g.awayScore) return;
+        const winner = g.homeScore > g.awayScore ? 'home' : 'away';
+        const pick = entry.picks[g.id];
+        if(!pick) return;
+        const isLock = entry.lockGameId === g.id;
+        if(pick===winner){
+          correct++;
+          if(isLock){ points += 2; lockCorrect = true; }
+          else { points += 1; }
+        } else {
+          incorrect++;
+          if(isLock){ points -= 1; lockCorrect = false; }
+        }
+      });
+    }
+    out[player] = {points, correct, incorrect, lockCorrect};
+  });
+  return out;
+}
+
+function seasonStandings(){
+  const totals = {};
+  Object.keys(state.games).forEach(week=>{
+    const graded = gradeWeek(week);
+    Object.keys(graded).forEach(player=>{
+      if(!totals[player]) totals[player] = {player, points:0, correct:0, incorrect:0, lockCorrect:0, lockTotal:0};
+      const g = graded[player];
+      totals[player].points += g.points;
+      totals[player].correct += g.correct;
+      totals[player].incorrect += g.incorrect;
+      if(g.lockCorrect===true){ totals[player].lockCorrect++; totals[player].lockTotal++; }
+      if(g.lockCorrect===false){ totals[player].lockTotal++; }
+    });
+  });
+  const list = Object.values(totals);
+  list.sort((a,b)=>{
+    if(b.points!==a.points) return b.points-a.points;
+    if(b.lockCorrect!==a.lockCorrect) return b.lockCorrect-a.lockCorrect;
+    const aPct = a.correct/(a.correct+a.incorrect||1), bPct = b.correct/(b.correct+b.incorrect||1);
+    return bPct-aPct;
+  });
+  return list;
+}
+
+// ---------- render ----------
+function fmtDeadline(iso){
+  if(!iso) return "";
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = d-now;
+  const label = d.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  if(diffMs<=0) return {label, status:"Picks locked"};
+  const hrs = Math.floor(diffMs/3600000);
+  const days = Math.floor(hrs/24);
+  const rem = hrs%24;
+  const rel = days>0 ? `${days}d ${rem}h left` : `${hrs}h left`;
+  return {label, status:rel};
+}
+
+function render(){
+  const app = document.getElementById('app');
+  const wk = state.games[state.week];
+  const deadline = wk ? fmtDeadline(wk.deadline) : null;
+  const standings = seasonStandings();
+  const leader = standings[0];
+
+  app.innerHTML = `
+    <header>
+      <div>
+        <h1>PICK<span class="tag">'EM</span></h1>
+        <div class="sub">2026 NFL SEASON &middot; $5 BUY-IN &middot; ${CLOUD_ENABLED?'LIVE SYNC':'LOCAL MODE'}</div>
+      </div>
+      <button class="commish-btn ${state.commish?'active':''}" onclick="toggleCommish()">${state.commish? 'Commissioner \u2713':'Commissioner'}</button>
+    </header>
+
+    ${state.commishLoginOpen ? `
+      <div class="login-bar">
+        <input type="password" id="commish-pass" placeholder="Commissioner passphrase" onkeydown="if(event.key==='Enter') submitCommishLogin();">
+        <button class="primary" onclick="submitCommishLogin()">Unlock</button>
+        <button class="ghost" onclick="state.commishLoginOpen=false; render();">Cancel</button>
+      </div>
+    ` : ''}
+
+    <div class="week-tabs">
+      ${Array.from({length:18},(_,i)=>i+1).map(w=>`
+        <div class="week-tab ${w===state.week?'active':''} ${state.games[w]?'has-games':''}" onclick="setWeek(${w})">${w}</div>
+      `).join('')}
+    </div>
+
+    <div class="hero">
+      <div>
+        <div class="leader-label">Season Leader</div>
+        ${leader ? `<div class="leader-name">${leader.player}</div><div class="leader-pts">${leader.points}</div>` : `<div class="leader-name muted">No picks graded yet</div>`}
+      </div>
+      ${deadline ? `<div class="deadline"><b>${deadline.status}</b>Week ${state.week} locks<br>${deadline.label}</div>` : `<div class="deadline">No games set<br>for Week ${state.week} yet</div>`}
+    </div>
+
+    <nav class="section-nav">
+      <button class="${state.section==='picks'?'active':''}" onclick="setSection('picks')">Make Picks</button>
+      <button class="${state.section==='weekly'?'active':''}" onclick="setSection('weekly')">Weekly</button>
+      <button class="${state.section==='standings'?'active':''}" onclick="setSection('standings')">Standings</button>
+      ${state.commish?`<button class="${state.section==='commish'?'active':''}" onclick="setSection('commish')">Set Games</button>`:''}
+    </nav>
+
+    <main>
+      ${state.loading ? `<div class="panel small muted">${state.loading}</div>` : ''}
+      ${state.error ? `<div class="error-box">${state.error}</div>` : ''}
+      ${state.notice ? `<div class="notice-box">${state.notice}</div>` : ''}
+      ${state.section==='picks' ? renderPicks(wk, deadline) : ''}
+      ${state.section==='weekly' ? renderWeekly(wk) : ''}
+      ${state.section==='standings' ? renderStandings(standings) : ''}
+      ${state.section==='commish' ? renderCommish(wk) : ''}
+
+      <div class="foot-note">
+        Scoring: correct pick +1, incorrect 0. Your Lock pick is worth +2 total if correct, or &minus;1 if wrong (instead of the usual +1/0).
+        Tiebreakers: most correct locks, then best overall pick record. Weekly wins are bragging rights only \u2014 season total decides the winner after Week 18.
+      </div>
+    </main>
+  `;
+}
+
+function renderPicks(wk, deadline){
+  if(!wk || !wk.games.length){
+    return `<div class="empty">No games have been set for Week ${state.week} yet.${state.commish?' Head to "Set Games" to add this week\u2019s five picks.':' Check back once the commissioner sets this week\u2019s games.'}</div>`;
+  }
+  const locked = wk.deadline && new Date(wk.deadline) <= new Date();
+  const name = state.playerName.trim();
+  const submittedNames = Object.keys(state.picks[state.week]||{});
+  const myEntry = name && state.picks[state.week] && state.picks[state.week][name];
+
+  if(locked){
+    // show everyone's picks, graded
+    const graded = gradeWeek(state.week);
+    return `
+      <div class="panel">
+        <label>Your name (to highlight your row)</label>
+        <input type="text" value="${state.playerName}" oninput="state.playerName=this.value; renderSoft();" placeholder="e.g. Elliott">
+      </div>
+      ${wk.games.map(g=>renderGameRowReadonly(g)).join('')}
+      <div class="panel">
+        <b>Picks are locked for this week.</b>
+        <table style="margin-top:8px;">
+          <tr><th>Player</th><th>Pts</th><th>Record</th><th>Lock</th></tr>
+          ${submittedNames.map(p=>{
+            const e = state.picks[state.week][p];
+            const r = graded[p]||{points:0,correct:0,incorrect:0};
+            return `<tr class="${p===name?'winner-row':''}"><td>${p}</td><td class="pts">${r.points}</td><td>${r.correct}-${r.incorrect}</td><td>${e.lockGameId?'Locked':'\u2014'}</td></tr>`;
+          }).join('')}
+        </table>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="panel">
+      <label>Your name</label>
+      <input type="text" value="${state.playerName}" oninput="state.playerName=this.value;" placeholder="e.g. Elliott" list="player-list">
+      <datalist id="player-list">${state.players.map(p=>`<option value="${p}">`).join('')}</datalist>
+      <div class="small muted">Enter the same name every week so your points add up correctly.</div>
+    </div>
+    <div class="panel">
+      ${wk.games.map(g=>renderGameRowEditable(g)).join('')}
+      <button class="primary" style="width:100%; margin-top:6px;" onclick="submitPicks()">${myEntry?'Update my picks':'Submit my picks'}</button>
+    </div>
+    <div class="panel">
+      <div class="small muted" style="margin-bottom:6px;">Submitted so far (picks hidden until kickoff):</div>
+      <div class="submitted-list">
+        ${submittedNames.length? submittedNames.map(p=>`<span class="name-chip ${p===name?'you':''}">${p}</span>`).join('') : '<span class="muted small">Nobody yet \u2014 be the first!</span>'}
+      </div>
+    </div>
+  `;
+}
+
+function renderGameRowEditable(g){
+  const name = state.playerName.trim();
+  const entry = name && state.picks[state.week] && state.picks[state.week][name];
+  const pick = entry ? entry.picks[g.id] : (window._draft && window._draft[g.id]);
+  const isLock = entry ? entry.lockGameId===g.id : (window._draftLock===g.id);
+  return `
+    <div class="game-row">
+      <div class="game-meta"><span>${g.kickoff||''}</span></div>
+      <div class="matchup">
+        <div class="team-btn ${pick==='away'?'picked':''}" onclick="draftPick('${g.id}','away')">${g.away}</div>
+        <div class="team-btn ${pick==='home'?'picked':''}" onclick="draftPick('${g.id}','home')">${g.home}</div>
+      </div>
+      <div class="lock-toggle ${isLock?'active':''}" onclick="draftLock('${g.id}')"><span class="lock-star">${isLock?'\u2605':'\u2606'}</span> ${isLock? 'This is your Lock':'Set as Lock'}</div>
+    </div>
+  `;
+}
+
+function renderGameRowReadonly(g){
+  const winner = g.final && g.homeScore!==null && g.awayScore!==null ? (g.homeScore>g.awayScore?'home':g.awayScore>g.homeScore?'away':null) : null;
+  return `
+    <div class="game-row">
+      <div class="game-meta"><span>${g.final?'Final':(g.kickoff||'Scheduled')}</span></div>
+      <div class="matchup">
+        <div class="team-btn ${winner==='away'?'winner':''}">${g.away}${g.awayScore!==null&&g.awayScore!==undefined?`<span class="score">${g.awayScore}</span>`:''}</div>
+        <div class="team-btn ${winner==='home'?'winner':''}">${g.home}${g.homeScore!==null&&g.homeScore!==undefined?`<span class="score">${g.homeScore}</span>`:''}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWeekly(wk){
+  if(!wk) return `<div class="empty">No games set for Week ${state.week} yet.</div>`;
+  const graded = gradeWeek(state.week);
+  const rows = Object.keys(state.picks[state.week]||{}).map(p=>({player:p, ...graded[p]}));
+  rows.sort((a,b)=>b.points-a.points);
+  const topScore = rows.length? rows[0].points : null;
+  return `
+    <div class="panel">
+      <button class="tiny" onclick="refreshScoresForWeek(${state.week})">Refresh scores</button>
+      <table style="margin-top:10px;">
+        <tr><th>Player</th><th>Pts</th><th>Record</th></tr>
+        ${rows.length? rows.map(r=>`<tr class="${r.points===topScore?'winner-row':''}"><td>${r.player}</td><td class="pts">${r.points}</td><td>${r.correct}-${r.incorrect}</td></tr>`).join('') : '<tr><td colspan="3" class="muted small">No picks submitted yet.</td></tr>'}
+      </table>
+    </div>
+    ${wk.games.map(g=>renderGameRowReadonly(g)).join('')}
+  `;
+}
+
+function renderStandings(standings){
+  return `
+    <div class="panel">
+      <table>
+        <tr><th></th><th>Player</th><th>Pts</th><th>Record</th><th>Locks</th></tr>
+        ${standings.length? standings.map((r,i)=>`
+          <tr class="${i===0?'winner-row':''}">
+            <td class="rank">${i+1}</td><td>${r.player}</td><td class="pts">${r.points}</td>
+            <td>${r.correct}-${r.incorrect}</td><td>${r.lockCorrect}/${r.lockTotal}</td>
+          </tr>`).join('') : '<tr><td colspan="5" class="muted small">No picks graded yet \u2014 standings fill in once games go final.</td></tr>'}
+      </table>
+    </div>
+  `;
+}
+
+function renderCommish(wk){
+  const schedule = state.scheduleCache[state.week] || EMBEDDED_SCHEDULE[String(state.week)] || [];
+  const selectedIds = new Set((wk?.games||[]).map(g=>`${g.away}|${g.home}|${g.kickoff}`));
+  return `
+    <div class="panel">
+      <b>Week ${state.week} games</b>
+      <div class="small muted" style="margin:6px 0 10px;">Select exactly five games from the full NFL schedule. The deadline is automatically set to the earliest kickoff.</div>
+      ${wk ? wk.games.map((g,i)=>`
+        <div class="schedule-item">
+          <div class="info">${g.away} at ${g.home}<div class="kick">${g.kickoff||''}</div></div>
+          <button class="tiny" onclick="removeCommishGame(${i})">Remove</button>
+        </div>
+      `).join('') : '<div class="muted small">No games selected yet.</div>'}
+      <div class="small" style="margin-top:10px;"><b>Selected: ${wk?.games?.length||0} / 5</b></div>
+      ${wk && wk.games.length===5 ? `<button class="primary" style="width:100%; margin-top:10px;" onclick="saveWeekGames()">Save Week ${state.week} games</button>` : ''}
+    </div>
+
+    ${wk ? `
+    <div class="panel">
+      <b>Picks deadline</b>
+      <div class="small muted" style="margin:6px 0 10px;">
+        ${wk.deadline ? `Currently set to ${new Date(wk.deadline).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}. Picks lock automatically at this time.` : 'No deadline set yet.'}
+      </div>
+      <label>Set or override deadline</label>
+      <input type="datetime-local" id="manual-deadline">
+      <button class="ghost" onclick="setManualDeadline()">Update deadline</button>
+    </div>
+    ` : ''}
+
+    <div class="panel">
+      <button class="ghost" onclick="loadScheduleForWeek(${state.week})">Show Week ${state.week} schedule</button>
+      ${schedule.length ? `
+        <div style="margin-top:10px;">
+          ${schedule.map((g,i)=>`
+            <div class="schedule-item">
+              <div class="info">${g.away} at ${g.home}<div class="kick">${g.kickoff}</div></div>
+              <button class="tiny" ${selectedIds.has(`${g.away}|${g.home}|${g.kickoff}`)||((wk?.games?.length||0)>=5)?'disabled':''} onclick="addCommishGame(${i})">${selectedIds.has(`${g.away}|${g.home}|${g.kickoff}`)?'Added':'Add'}</button>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="muted small" style="margin-top:8px;">Click above to show the full schedule.</div>'}
+    </div>
+  `;
+}
+
+// ---------- interactions ----------
+window._draft = {};
+window._draftLock = null;
+
+function toggleCommish(){
+  if(state.commish){ state.commish=false; if(state.section==='commish') state.section='picks'; render(); return; }
+  clearNotices();
+  state.commishLoginOpen = !state.commishLoginOpen;
+  render();
+}
+function submitCommishLogin(){
+  const val = document.getElementById('commish-pass').value;
+  if(val===COMMISSIONER_PASSPHRASE){
+    state.commish=true; state.commishLoginOpen=false; state.error=null;
+    state.notice="Commissioner mode unlocked.";
+  } else {
+    state.error = "Incorrect passphrase.";
+  }
+  render();
+}
+function setWeek(w){ state.week=w; window._draft={}; window._draftLock=null; clearNotices(); render(); }
+function setSection(s){ state.section=s; clearNotices(); render(); }
+function renderSoft(){ render(); }
+
+function draftPick(gameId, side){
+  const name = state.playerName.trim();
+  if(!name){ state.error="Enter your name first."; render(); return; }
+  clearNotices();
+  if(!state.picks[state.week]) state.picks[state.week]={};
+  if(!state.picks[state.week][name]) state.picks[state.week][name]={picks:{}, lockGameId:null, submittedAt:null};
+  state.picks[state.week][name].picks[gameId]=side;
+  render();
+}
+function draftLock(gameId){
+  const name = state.playerName.trim();
+  if(!name){ state.error="Enter your name first."; render(); return; }
+  clearNotices();
+  if(!state.picks[state.week]) state.picks[state.week]={};
+  if(!state.picks[state.week][name]) state.picks[state.week][name]={picks:{}, lockGameId:null, submittedAt:null};
+  const entry = state.picks[state.week][name];
+  entry.lockGameId = entry.lockGameId===gameId ? null : gameId;
+  render();
+}
+async function submitPicks(){
+  const name = state.playerName.trim();
+  if(!name){ state.error="Enter your name first."; render(); return; }
+  const entry = state.picks[state.week] && state.picks[state.week][name];
+  const wk = state.games[state.week];
+  if(!wk || !wk.games.length){ state.error="This week has no games set yet."; render(); return; }
+  if(wk.deadline && new Date(wk.deadline)<=new Date()){ state.error="Picks are already locked for this week."; render(); return; }
+  if(!entry || Object.keys(entry.picks).length < wk.games.length){ state.error="Pick a team in every game before submitting."; render(); return; }
+  if(!entry.lockGameId){ state.error="Choose one game as your Lock."; render(); return; }
+  entry.submittedAt = new Date().toISOString();
+  try{
+    if(!state.players.includes(name)) state.players.push(name);
+    await savePlayers();
+    await savePicks();
+    clearNotices();
+    state.notice = CLOUD_ENABLED ? "Picks submitted and synced to the league." : "Picks saved locally. Connect Supabase to sync with everyone.";
+  }catch(e){
+    console.error(e);
+    state.error="Your picks could not be saved. Nothing was submitted—please try again.";
+    entry.submittedAt=null;
+  }
+  render();
+}
+
+function removeCommishGame(i){ clearNotices(); state.games[state.week].games.splice(i,1); render(); }
+function addCommishGame(i){
+  clearNotices();
+  const schedule = state.scheduleCache[state.week] || EMBEDDED_SCHEDULE[String(state.week)] || [];
+  const g = schedule[i];
+  if(!g) return;
+  if(!state.games[state.week]) state.games[state.week] = {deadline:null, games:[]};
+  if(state.games[state.week].games.length>=5){ state.error="Already have 5 games for this week."; render(); return; }
+  const duplicate = state.games[state.week].games.some(x=>x.away===g.away && x.home===g.home && x.kickoff===g.kickoff);
+  if(duplicate){ state.error="That game is already selected."; render(); return; }
+  state.games[state.week].games.push({id: stableGameId(state.week,g), away:g.away, home:g.home, kickoff:g.kickoff, kickoffISO:g.kickoff_iso, awayScore:null, homeScore:null, final:false});
+  render();
+}
+
+async function saveWeekGames(){
+  const wk = state.games[state.week];
+  if(!wk || wk.games.length!==5){ state.error="Select exactly 5 games before saving."; render(); return; }
+  const deadlines = wk.games.map(g=>g.kickoffISO ? new Date(g.kickoffISO) : null).filter(Boolean);
+  const allHaveTimes = deadlines.length === wk.games.length;
+  wk.deadline = deadlines.length ? new Date(Math.min(...deadlines)).toISOString() : wk.deadline || null;
+  try{
+    await saveGames();
+    clearNotices();
+    state.notice = "Week " + state.week + " games saved and synced.";
+  }catch(e){
+    console.error(e);
+    state.error="The week could not be saved to the shared database. Try again.";
+  }
+  render();
+}
+async function setManualDeadline(){
+  const val = document.getElementById('manual-deadline').value;
+  if(!val){ state.error = "Choose a date and time first."; render(); return; }
+  const wk = state.games[state.week];
+  if(!wk){ return; }
+  wk.deadline = new Date(val).toISOString();
+  try{
+    await saveGames();
+    clearNotices();
+    state.notice = "Deadline updated and synced.";
+  }catch(e){
+    console.error(e);
+    state.error="The deadline could not be synced. Try again.";
+  }
+  render();
+}
+
+loadAll();
+</script>
+
+
+</body></html>
